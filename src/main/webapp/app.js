@@ -7,23 +7,13 @@ angular.module('musicPsApp', ['ui.router'])
             .state('starter', {
                 url: "/starter",
                 templateUrl: "templates/starter.html",
-                controller: "starterCtrl",
-                onEnter: function ($state, auth) {
-                    if (auth.isAuthenticated()) {
-                        $state.go('home');
-                    }
-                }
+                controller: "starterCtrl"
             })
             //home screen
             .state('home', {
                 url: "/home",
                 templateUrl: "templates/home.html",
-                controller: "homeCtrl",
-                onEnter: function ($state, auth) {
-                    if (!auth.isAuthenticated()) {
-                        $state.go('starter');
-                    }
-                }
+                controller: "homeCtrl"
             });
 
         $urlRouterProvider.otherwise('starter');

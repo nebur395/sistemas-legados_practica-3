@@ -1,101 +1,49 @@
 angular.module('musicPsApp')
 
-// 'auth' service manage the authentication function of the page with the server
-    .factory('auth', function ($state, $http) {
-
-        var _authenticated = false;
-
-        return {
-            //return true if the user is authenticated
-            isAuthenticated: function () {
-                return _authenticated;
-            },
-
-            //authenticate the [identity] user
-            authenticate: function (valor) {
-                _authenticated = valor;
-            },
-
-            //logout function
-            logout: function () {
-                var that = this;
-                $http({
-                    method: 'GET',
-                    url: 'logout'
-                }).success(function () {
-                    that.authenticate(false);
-                    $state.go('starter');
-                }).error(function () {
-                });
-            },
-
-            //send the login info to the server
-            login: function (user, password, callbackProgress, callback) {
-                var that = this;
-                $http({
-                    method: 'GET',
-                    url: 'login',
-                    headers: {
-                        "user": user,
-                        "pass": password
-                    }
-                }).success(function () {
-                    that.authenticate(true);
-                    $state.go('home');
-                }).error(function (data) {
-                    callbackProgress(false);
-                    callback(data);
-                });
-            }
-        };
-    })
-
     // 'exerciseService' service manage the exercise home functions of the page with the server
     .factory('taskService', function ($state, $http) {
 
         return {
             //get the general list
-            getGeneralList: function (callback) {
+            initApp: function (callbackSuccess, callbackError) {
                 $http({
                     method: 'GET',
-                    url: 'viewTasks',
-                    headers: {
-                        "type": "general"
-                    }
+                    url: 'getRegisters'
                 }).success(function (data) {
-                    callback(data.tasks);
-                }).error(function () {
+                    callbackSuccess(data.registers);
+                }).error(function (data) {
+                    callbackError(data);
                 });
             },
 
             //get the general list
-            getSpecificList: function (callback) {
+            nameSearch: function (name, callbackSuccess, callbackError) {
                 $http({
                     method: 'GET',
-                    url: 'viewTasks',
+                    url: 'filterByName',
                     headers: {
-                        "type": "specific"
+                        "name": name
                     }
                 }).success(function (data) {
-                    callback(data.tasks);
-                }).error(function () {
+                    callbackSuccess(data.programs);
+                }).error(function (data) {
+                    callbackError(data);
                 });
             },
 
-            // add task
-            addTask: function (object,callbackSuccess,callbackError) {
+            //get the general list
+            tapeSearch: function (tape, callbackSuccess, callbackError) {
                 $http({
-                    method: 'POST',
-                    url: 'newTask',
-                    data: JSON.stringify(object),
+                    method: 'GET',
+                    url: 'filterByName',
                     headers: {
-                        'Content-Type': 'application/json'
+                        "tape": tape
                     }
-                 }).success(function () {
-                    callbackSuccess(object);
-                 }).error(function (data) {
+                }).success(function (data) {
+                    callbackSuccess(data.programs);
+                }).error(function (data) {
                     callbackError(data);
-                 });
+                });
             }
         };
     });
