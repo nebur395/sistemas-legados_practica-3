@@ -1,4 +1,4 @@
-angular.module('musicPsApp', ['ui.router'])
+angular.module('basicMSDOSApp', ['ui.router'])
 
     .config(function ($stateProvider, $urlRouterProvider) {
         $stateProvider

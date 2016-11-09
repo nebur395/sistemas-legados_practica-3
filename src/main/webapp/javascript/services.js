@@ -1,10 +1,10 @@
-angular.module('musicPsApp')
+angular.module('basicMSDOSApp')
 
-    // 'exerciseService' service manage the exercise home functions of the page with the server
-    .factory('taskService', function ($state, $http) {
+    // 'basicMSDOS' service manage the basicMSDOS functionallities
+    .factory('basicMSDOS', function ($state, $http) {
 
         return {
-            //get the general list
+            //get the registers
             initApp: function (callbackLoad, callbackSuccess, callbackError) {
                 $http({
                     method: 'GET',
@@ -17,7 +17,7 @@ angular.module('musicPsApp')
                 });
             },
 
-            //get the general list
+            //get the list filtered by name
             nameSearch: function (name, callbackSuccess, callbackError) {
                 $http({
                     method: 'GET',
@@ -32,7 +32,7 @@ angular.module('musicPsApp')
                 });
             },
 
-            //get the general list
+            //get the list filtered by tape
             tapeSearch: function (tape, callbackSuccess, callbackError) {
                 $http({
                     method: 'GET',

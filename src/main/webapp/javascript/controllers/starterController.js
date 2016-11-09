@@ -1,6 +1,6 @@
-angular.module('musicPsApp')
+angular.module('basicMSDOSApp')
 
-    .controller('starterCtrl', ['$scope', '$state', 'taskService', function ($scope, $state, taskService) {
+    .controller('starterCtrl', ['$scope', '$state', 'basicMSDOS', function ($scope, $state, basicMSDOS) {
 
         // inputs visual variables
         $scope.registers = "";
@@ -26,11 +26,11 @@ angular.module('musicPsApp')
 
         $scope.search = function () {
             if ($scope.searchByName) {
-                taskService.nameSearch($scope.userInput, function (programs) {
+                basicMSDOS.nameSearch($scope.userInput, function (programs) {
                     $scope.programsList = programs;
                 }, showError);
             } else {
-                taskService.tapeSearch($scope.userInput, function (programs) {
+                basicMSDOS.tapeSearch($scope.userInput, function (programs) {
                     $scope.programsList = programs;
                 }, showError);
             }
@@ -41,7 +41,7 @@ angular.module('musicPsApp')
         };
 
         $scope.getRegisters = function () {
-            taskService.initApp(activeProgress, function (registers) {
+            basicMSDOS.initApp(activeProgress, function (registers) {
                 $scope.registers = registers;
             }, showError);
         };
