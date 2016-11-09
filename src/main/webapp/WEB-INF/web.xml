@@ -10,4 +10,31 @@
  	        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
+  <servlet>
+    <servlet-name>GetRecords</servlet-name>
+    <servlet-class>servlets.GetRecords</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetRecords</servlet-name>
+    <url-pattern>/getRecords</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>FilterByName</servlet-name>
+    <servlet-class>servlets.FilterByName</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>FilterByName</servlet-name>
+    <url-pattern>/filterByName</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>FilterByTape</servlet-name>
+    <servlet-class>servlets.FilterByTape</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>FilterByTape</servlet-name>
+    <url-pattern>/filterByTape</url-pattern>
+  </servlet-mapping>
+
 </web-app>
