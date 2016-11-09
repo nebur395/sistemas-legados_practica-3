@@ -8,12 +8,6 @@ angular.module('musicPsApp', ['ui.router'])
                 url: "/starter",
                 templateUrl: "templates/starter.html",
                 controller: "starterCtrl"
-            })
-            //home screen
-            .state('home', {
-                url: "/home",
-                templateUrl: "templates/home.html",
-                controller: "homeCtrl"
             });
 
         $urlRouterProvider.otherwise('starter');

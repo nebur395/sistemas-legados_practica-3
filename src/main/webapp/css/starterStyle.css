@@ -1,12 +1,17 @@
-#starterStyle input {
-  margin: 5% 0;
-}
-
-#starterStyle #loginForm {
-  margin-top: 25%;
-}
-
 h1 {
   font-size: 200%;
   text-align: center;
+}
+.form-group {
+  margin: 3% 0;
+}
+
+#loadBar {
+  margin-top: 20%;
+}
+
+.programsList {
+  background-color: #fff;
+  margin-top: 5%;
+  border-radius: 10px;
 }

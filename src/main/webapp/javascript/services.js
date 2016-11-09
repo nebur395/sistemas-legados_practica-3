@@ -5,11 +5,12 @@ angular.module('musicPsApp')
 
         return {
             //get the general list
-            initApp: function (callbackSuccess, callbackError) {
+            initApp: function (callbackLoad, callbackSuccess, callbackError) {
                 $http({
                     method: 'GET',
                     url: 'getRegisters'
                 }).success(function (data) {
+                    callbackLoad(true);
                     callbackSuccess(data.registers);
                 }).error(function (data) {
                     callbackError(data);
@@ -35,7 +36,7 @@ angular.module('musicPsApp')
             tapeSearch: function (tape, callbackSuccess, callbackError) {
                 $http({
                     method: 'GET',
-                    url: 'filterByName',
+                    url: 'filterByTape',
                     headers: {
                         "tape": tape
                     }
