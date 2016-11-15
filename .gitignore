@@ -46,3 +46,6 @@ build/
 
 ## Ignore Gradle GUI config
 gradle-app.settings
+
+# Ignore WAR config
+classes/
