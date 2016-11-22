@@ -3,11 +3,9 @@ package connection;
 import models.Program;
 import ocr.OCR;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -67,6 +65,10 @@ public class MenaData {
             e.printStackTrace();
         }
         // Get Window position
+        this.getWindowPosition();
+    }
+
+    private void getWindowPosition() {
         ProcessBuilder wmctrlBuilder = new ProcessBuilder(Const.WMCTRL_COMMAND, "-lG");
         Process wmctrl = null;
         try {
