@@ -76,7 +76,7 @@ public class MenaData {
         }
         // Capture image
         BufferedImage image = this.robot.createScreenCapture(new Rectangle(365 + 78, 164 + 66, 8 * 15, 10));
-        ImageIO.write(image, "png", new File("out.png"));
+        //ImageIO.write(image, "png", new File("out.png"));
         // Go to previous menu
         RobotType.typeString("\n", this.robot);
         // Analyze
@@ -158,11 +158,11 @@ public class MenaData {
         do {
             for (int i = 0; i < 18; i++) {
                 BufferedImage register = this.robot.createScreenCapture(new Rectangle(365 + 22, 164 + 66 + 16 * i, 8 * 76, 10));
-                try {
-                    ImageIO.write(register, "png", new File("result_" + i + ".png"));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                //try {
+                //    ImageIO.write(register, "png", new File("result_" + i + ".png"));
+                //} catch (IOException e) {
+                //    e.printStackTrace();
+                //}
                 String registerString = ocr.getStringFromImage(register);
                 if (registerString.substring(0, 9).equals("         ")) {
                     break;
