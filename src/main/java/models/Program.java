@@ -57,7 +57,8 @@ public class Program {
     }
 
     public String serialize(){
-        return String.format("{\"number\":\"%s\",\"name\":\"%s\",\"type\":\"%s\",\"tape\":\"%s\",\"registry\":\"%s\"}",
+        return String.format("{\"number\":\"%s\",\"name\":\"%s\",\"type\":\"%s\",\"tape\":\"%s\"," +
+                "\"register\":\"%s\"}",
             this.number, this.name, this.type, this.tape, this.registry);
     }
 }

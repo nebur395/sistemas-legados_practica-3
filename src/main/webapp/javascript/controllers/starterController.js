@@ -41,11 +41,12 @@ angular.module('basicMSDOSApp')
         // sort the [list] array alphabetically by register
         function sortCustom (list) {
             list.sort(function(a, b){
-                var x = a.register.toLowerCase();
+                return a.register - b.register;
+                /*var x = a.register.toLowerCase();
                 var y = b.register.toLowerCase();
                 if (x < y) {return -1;}
                 if (x > y) {return 1;}
-                return 0;
+                return 0;*/
             });
         }
 
