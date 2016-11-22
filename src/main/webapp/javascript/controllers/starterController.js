@@ -28,13 +28,26 @@ angular.module('basicMSDOSApp')
             if ($scope.searchByName) {
                 basicMSDOS.nameSearch($scope.userInput, function (programs) {
                     $scope.programsList = programs;
+                    sortCustom($scope.programsList);
                 }, showError);
             } else {
                 basicMSDOS.tapeSearch($scope.userInput, function (programs) {
                     $scope.programsList = programs;
+                    sortCustom($scope.programsList);
                 }, showError);
             }
         };
+
+        // sort the [list] array alphabetically by register
+        function sortCustom (list) {
+            list.sort(function(a, b){
+                var x = a.register.toLowerCase();
+                var y = b.register.toLowerCase();
+                if (x < y) {return -1;}
+                if (x > y) {return 1;}
+                return 0;
+            });
+        }
 
         var activeProgress = function (active) {
             $scope.loaded = active;

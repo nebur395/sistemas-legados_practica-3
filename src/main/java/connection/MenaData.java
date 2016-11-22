@@ -68,7 +68,7 @@ public class MenaData {
         this.getWindowPosition();
     }
 
-    private void getWindowPosition() {
+    public void getWindowPosition() {
         ProcessBuilder wmctrlBuilder = new ProcessBuilder(Const.WMCTRL_COMMAND, "-lG");
         Process wmctrl = null;
         try {
@@ -106,7 +106,7 @@ public class MenaData {
         RobotType.typeString("4", this.robot);
         // Wait for the VM
         try {
-            Thread.sleep(100);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
         }
         // Capture image

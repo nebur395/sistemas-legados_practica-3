@@ -1,6 +1,7 @@
 package servlets;
 
 
+import connection.MenaData;
 import models.Program;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -27,10 +28,10 @@ public class FilterByTape extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        MenaData menaData = new MenaData();
+        menaData.getWindowPosition();
         String tape= request.getHeader("tape");
-        // In this point it'll call the lower layer method to search for a programs that are recorded in the tape.
-        // This varible will be returned by the previous call.
-        Iterator<Program> iter = null;
+        Iterator<Program> iter = menaData.searchByTape(tape).iterator();
         JSONArray array = constructResponse(iter);
         JSONObject json = new JSONObject();
         json.element("programs", array);

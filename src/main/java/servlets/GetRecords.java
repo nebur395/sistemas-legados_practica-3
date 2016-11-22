@@ -1,6 +1,7 @@
 package servlets;
 
 
+import connection.MenaData;
 import net.sf.json.JSONObject;
 
 import javax.servlet.ServletException;
@@ -24,9 +25,11 @@ public class GetRecords extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        MenaData menaData = new MenaData();
         // In this point it'll call the lower layer method to init the app
         // This varible will be returned by the previous call.
-        int regNum = 0;
+        menaData.getWindowPosition();
+        int regNum = menaData.getNumberOfRegisters();
         JSONObject json = new JSONObject();
         json.element("registers", regNum);
         response.setStatus(HttpServletResponse.SC_OK);

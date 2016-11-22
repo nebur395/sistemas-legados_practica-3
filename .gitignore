@@ -30,6 +30,7 @@ jrebel.lic
 
 # paulp script
 /.lib/
+*.png
 
 # Gradle template
 .gradle

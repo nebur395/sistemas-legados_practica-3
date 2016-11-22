@@ -16,7 +16,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>GetRecords</servlet-name>
-    <url-pattern>/getRecords</url-pattern>
+    <url-pattern>/getRegisters</url-pattern>
   </servlet-mapping>
 
   <servlet>
