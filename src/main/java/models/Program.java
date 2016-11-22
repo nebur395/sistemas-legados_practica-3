@@ -6,14 +6,12 @@ public class Program {
     private String name;
     private String type;
     private String tape;
-    private String register;
 
-    public Program(String number, String name, String type, String tape, String register){
+    public Program(String number, String name, String type, String tape){
         this.number = number;
         this.name = name;
         this.type = type;
         this.tape = tape;
-        this.register = register;
     }
 
     public String getNumber() {
@@ -48,16 +46,8 @@ public class Program {
         this.tape = tape;
     }
 
-    public String getRegister() {
-        return register;
-    }
-
-    public void setRegister(String register) {
-        this.register = register;
-    }
-
     public String serialize(){
-        return String.format("{\"number\":\"%s\",\"name\":\"%s\",\"type\":\"%s\",\"tape\":\"%s\",\"register\":\"%s\"}",
-            this.number, this.name, this.type, this.tape, this.register);
+        return String.format("{\"number\":\"%s\",\"name\":\"%s\",\"type\":\"%s\",\"tape\":\"%s\"}",
+            this.number, this.name, this.type, this.tape);
     }
 }

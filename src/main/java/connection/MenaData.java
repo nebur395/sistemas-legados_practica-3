@@ -1,7 +1,7 @@
 package connection;
 
-import net.sourceforge.tess4j.Tesseract1;
-import net.sourceforge.tess4j.TesseractException;
+import models.Program;
+import ocr.OCR;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Class that abstracts the access to the legacy system
@@ -17,7 +18,7 @@ public class MenaData {
     /**
      * Robot that allows to input keystrokes programmatically
      */
-    private Robot robot;
+    public Robot robot;
     /**
      * DOSBox process
      */
@@ -25,28 +26,9 @@ public class MenaData {
 
     /**
      * Class constructor
-     * Starts DOSBox and start the Robot interface
+     * Starts the Robot interface.
      */
     public MenaData() {
-        this("");
-    }
-
-    /**
-     * Class constructor
-     * Starts DOSBox and start the Robot interface. Executes the given command on emulator start
-     */
-    public MenaData(String autoExecute) {
-        // Create and run process and Robot
-        ProcessBuilder builder = new ProcessBuilder(Const.EXECUTABLE_NAME);
-        try {
-            this.dosbox = builder.start();
-        } catch (IOException e) {
-        }
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            // NOBODY CARES ABOUT YOUR EXCEPTIONS
-        }
         try {
             this.robot = new Robot();
         } catch (AWTException e) {
@@ -54,13 +36,26 @@ public class MenaData {
             System.out.println("Interface Robot impossible to start. Shutting down.");
             System.exit(1);
         }
+    }
+
+    public void start() {
+        this.start("");
+    }
+
+    public void start(String autoExecute) {
+        // Create and run process and Robot
+        ProcessBuilder builder = new ProcessBuilder(Const.EXECUTABLE_NAME);
+        try {
+            this.dosbox = builder.start();
+        } catch (IOException e) {
+        }
         // Autoexecute command, if given
         if (autoExecute != null && autoExecute.length() > 0) {
             RobotType.typeString(autoExecute, this.robot);
         }
         // Wait until the program is loaded and running
         try {
-            Thread.sleep(2750);
+            Thread.sleep(2500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -71,7 +66,7 @@ public class MenaData {
      *
      * @return Current number of registers
      */
-    public int getNumberOfRegisters() {
+    public int getNumberOfRegisters() throws IOException {
         // Enter to number of registers screen
         RobotType.typeString("4", this.robot);
         // Wait for the VM
@@ -80,89 +75,53 @@ public class MenaData {
         } catch (InterruptedException e) {
         }
         // Capture image
-        BufferedImage image = this.robot.createScreenCapture(new Rectangle(365 + 70, 164 + 60, 140, 26));
+        BufferedImage image = this.robot.createScreenCapture(new Rectangle(365 + 78, 164 + 66, 8 * 15, 10));
+        ImageIO.write(image, "png", new File("out.png"));
         // Go to previous menu
         RobotType.typeString("\n", this.robot);
         // Analyze
-        Tesseract1 ocr = new Tesseract1();
-        ocr.setLanguage("spa");
-        String result = "";
-        try {
-            result = ocr.doOCR(image);
-        } catch (TesseractException e) {
-            e.printStackTrace();
-        }
+        OCR ocr = new OCR("fonts");
+        String result = ocr.getStringFromImage(image);
+
         // Eliminate extra stuff and convert the string to a number
-        return Integer.valueOf(result.replaceAll("[^0-9?!\\.]", ""));
+        return Integer.valueOf(result.split("  ")[0]);
     }
 
-    public ArrayList<String> searchByName(String name) {
-        ArrayList<String> result = new ArrayList<String>();
+    public ArrayList<Program> searchByName(String name) {
+        ArrayList<Program> result = new ArrayList<>();
         // Enter to the search screen
-        RobotType.typeString("7", this.robot);
-        // Wait for the VM
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-        }
-        RobotType.typeString("N\n", this.robot);
-        // Wait for the VM
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-        }
-        RobotType.typeString(name + "\n", this.robot);
-        // Wait for the VM
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-        }
-
+        RobotType.typeString("7N\n" + name + "\n", this.robot);
         // Create recognizer
-        String finalConditionString = "";
-        Tesseract1 ocr = new Tesseract1();
-        ocr.setLanguage("spa");
+        OCR ocr = new OCR("fonts");
+        String recognized;
+        String finalConditionString;
         try {
-            Thread.sleep(750);
+            Thread.sleep(300);
         } catch (InterruptedException e) {
         }
-        int i = 0;
         do {
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-            }
-
-            BufferedImage gameImage = this.robot.createScreenCapture(new Rectangle(365 + 30, 164 + 60, 450, 25));
-            File outputfile = new File("game" + i + ".png");
-            i++;
-            try {
-                ImageIO.write(gameImage, "png", outputfile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            BufferedImage gameImage = this.robot.createScreenCapture(new Rectangle(365 + 38, 164 + 66, 8 * 64, 10));
+            recognized = ocr.getStringFromImage(gameImage);
             RobotType.typeString("N\n", this.robot);
-            // Wait for the VM
+
+            // Create object
             try {
-                Thread.sleep(500);
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // System.out.println(recognized);
+            result.add(parseRegister(recognized.trim()));
+
+            try {
+                Thread.sleep(50);
             } catch (InterruptedException e) {
             }
-            BufferedImage recognizeEnd = this.robot.createScreenCapture(new Rectangle(365 + 360, 164 + 175, 50, 25));
-            // Analyze game line
-            String gameRecognized = "";
-            try {
-                gameRecognized = ocr.doOCR(gameImage);
-            } catch (TesseractException e) {
-                e.printStackTrace();
-            }
-            // Analyze final condition
-            try {
-                finalConditionString = ocr.doOCR(recognizeEnd);
-            } catch (TesseractException e) {
-                e.printStackTrace();
-            }
-            System.out.println("Recognize: \"" + gameRecognized.replaceAll("\n", "") + "\"");
-        } while (finalConditionString.length() == 0);
+            BufferedImage recognizeEnd = this.robot.createScreenCapture(new Rectangle(365 + 358, 164 + 178, 8, 10));
+
+            finalConditionString = ocr.getCharacterFromImage(recognizeEnd);
+        }
+        while (finalConditionString.equals(" "));
 
         RobotType.typeString("\n", this.robot);
         // Wait for the VM
@@ -176,24 +135,91 @@ public class MenaData {
             Thread.sleep(50);
         } catch (InterruptedException e) {
         }
+        return result;
+    }
 
-        return null;
+    public ArrayList<Program> searchByTape(String tapeId) {
+        ArrayList<Program> result = new ArrayList<>();
+
+        OCR ocr = new OCR("fonts");
+        // Enter to the correct screen
+        RobotType.typeString("6" + tapeId + "\n", this.robot);
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        String checkEnd = "";
+        try {
+            Thread.sleep(150);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        do {
+            for (int i = 0; i < 18; i++) {
+                BufferedImage register = this.robot.createScreenCapture(new Rectangle(365 + 22, 164 + 66 + 16 * i, 8 * 76, 10));
+                try {
+                    ImageIO.write(register, "png", new File("result_" + i + ".png"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                String registerString = ocr.getStringFromImage(register);
+                if (registerString.substring(0, 9).equals("         ")) {
+                    break;
+                }
+                if (tapeId.equals("") || Arrays.asList(registerString.substring(62, 71).trim().split("-")).contains(tapeId)) {
+                    //System.out.println(registerString);
+                    result.add(parseRegisterLine(registerString));
+                    //parseRegisterLine().serialize());
+                }
+                //System.out.println(;
+//                System.out.println(ocr.getStringFromImage(register));
+            }
+            RobotType.typeString(" ", this.robot);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            checkEnd = ocr.getStringFromImage(this.robot.createScreenCapture(new Rectangle(365 + 246, 164 + 50, 8 * 7, 10)));
+        } while (!checkEnd.equals("M E N U"));
+        return result;
     }
 
     /**
      * Close the program and kill the emulator
      */
     public void close() {
-        RobotType.typeString("8", robot);
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
+        if (this.dosbox != null) {
+            RobotType.typeString("8", robot);
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+            }
+            RobotType.typeString("S\n", robot);
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+            }
+            this.dosbox.destroy();
+            this.dosbox = null;
         }
-        RobotType.typeString("S\n", robot);
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
-        }
-        this.dosbox.destroy();
     }
+
+    private Program parseRegister(String s) {
+        return new Program(s.split("  - ")[0],
+            s.split("  - ")[1].split("   ")[0],
+            s.split("  - ")[1].split("   ")[1],
+            s.split("  - ")[1].split("   ")[2].split(":")[1]);
+    }
+
+    private Program parseRegisterLine(String s) {
+        return new Program(
+            s.substring(71, 76).trim(),
+            s.substring(9, 41).trim(),
+            s.substring(42, 62).trim(),
+            s.substring(62, 71).trim()
+        );
+    }
+
 }
