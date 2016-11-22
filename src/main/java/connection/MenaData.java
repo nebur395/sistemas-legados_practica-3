@@ -245,16 +245,17 @@ public class MenaData {
         return new Program(s.split("  - ")[0],
             s.split("  - ")[1].split("   ")[0],
             s.split("  - ")[1].split("   ")[1],
-            s.split("  - ")[1].split("   ")[2].split(":")[1]);
+            s.split("  - ")[1].split("   ")[2].split(":")[1],
+            "");
     }
 
     private Program parseRegisterLine(String s) {
         return new Program(
-            s.substring(71, 76).trim(),
+            s.substring(0, 8).trim(),
             s.substring(9, 41).trim(),
             s.substring(42, 62).trim(),
-            s.substring(62, 71).trim()
-        );
+            s.substring(62, 71).trim(),
+            s.substring(71, 76).trim());
     }
 
 }

@@ -1,5 +1,6 @@
 package connection;
 
+
 /**
  * Class that contains the configuration constants
  */
