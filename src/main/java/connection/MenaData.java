@@ -6,8 +6,10 @@ import ocr.OCR;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -24,6 +26,11 @@ public class MenaData {
      */
     private Process dosbox;
 
+    /**
+     * DOSBox's window position
+     */
+    int dosboxX = 365;
+    int dosboxY = 164;
     /**
      * Class constructor
      * Starts the Robot interface.
@@ -55,7 +62,33 @@ public class MenaData {
         }
         // Wait until the program is loaded and running
         try {
-            Thread.sleep(2500);
+            Thread.sleep(1250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // Get Window position
+        ProcessBuilder wmctrlBuilder = new ProcessBuilder(Const.WMCTRL_COMMAND, "-lG");
+        Process wmctrl = null;
+        try {
+            wmctrl = wmctrlBuilder.start();
+            BufferedReader stdout = new BufferedReader(new InputStreamReader(wmctrl.getInputStream()));
+            String line = "";
+            while (null != (line = stdout.readLine())) {
+                line = line.replaceAll("\\s+", " ");
+                if (line.contains("DOSBox")) {
+                    this.dosboxX = Integer.valueOf(line.split(" ")[2]);
+                    this.dosboxY = Integer.valueOf(line.split(" ")[3]);
+                    //System.out.println("X: " + this.dosboxX + ", Y: " + this.dosboxY);
+                }
+            }
+            wmctrl.destroy();
+        } catch (NullPointerException | IOException e) {
+            e.printStackTrace();
+            System.out.println("Unable to get DOSBox window position. Shutting down.");
+            System.exit(1);
+        }
+        try {
+            Thread.sleep(250);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -75,7 +108,7 @@ public class MenaData {
         } catch (InterruptedException e) {
         }
         // Capture image
-        BufferedImage image = this.robot.createScreenCapture(new Rectangle(365 + 78, 164 + 66, 8 * 15, 10));
+        BufferedImage image = this.robot.createScreenCapture(new Rectangle(this.dosboxX + 78, this.dosboxY + 66, 8 * 15, 10));
         //ImageIO.write(image, "png", new File("out.png"));
         // Go to previous menu
         RobotType.typeString("\n", this.robot);
@@ -100,7 +133,7 @@ public class MenaData {
         } catch (InterruptedException e) {
         }
         do {
-            BufferedImage gameImage = this.robot.createScreenCapture(new Rectangle(365 + 38, 164 + 66, 8 * 64, 10));
+            BufferedImage gameImage = this.robot.createScreenCapture(new Rectangle(this.dosboxX + 38, this.dosboxY + 66, 8 * 64, 10));
             recognized = ocr.getStringFromImage(gameImage);
             RobotType.typeString("N\n", this.robot);
 
@@ -117,7 +150,7 @@ public class MenaData {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
             }
-            BufferedImage recognizeEnd = this.robot.createScreenCapture(new Rectangle(365 + 358, 164 + 178, 8, 10));
+            BufferedImage recognizeEnd = this.robot.createScreenCapture(new Rectangle(this.dosboxX + 358, this.dosboxY + 178, 8, 10));
 
             finalConditionString = ocr.getCharacterFromImage(recognizeEnd);
         }
@@ -157,7 +190,7 @@ public class MenaData {
         }
         do {
             for (int i = 0; i < 18; i++) {
-                BufferedImage register = this.robot.createScreenCapture(new Rectangle(365 + 22, 164 + 66 + 16 * i, 8 * 76, 10));
+                BufferedImage register = this.robot.createScreenCapture(new Rectangle(this.dosboxX + 22, this.dosboxY + 66 + 16 * i, 8 * 76, 10));
                 //try {
                 //    ImageIO.write(register, "png", new File("result_" + i + ".png"));
                 //} catch (IOException e) {
@@ -181,7 +214,7 @@ public class MenaData {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            checkEnd = ocr.getStringFromImage(this.robot.createScreenCapture(new Rectangle(365 + 246, 164 + 50, 8 * 7, 10)));
+            checkEnd = ocr.getStringFromImage(this.robot.createScreenCapture(new Rectangle(this.dosboxX + 246, this.dosboxY + 50, 8 * 7, 10)));
         } while (!checkEnd.equals("M E N U"));
         return result;
     }
